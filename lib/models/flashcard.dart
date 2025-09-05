@@ -10,5 +10,20 @@ class Flashcard extends HiveObject {
   @HiveField(1)
   String answer;
 
-  Flashcard({required this.question, required this.answer});
+  @HiveField(2)
+  String? questionImagePath;
+
+  @HiveField(3)
+  String? answerImagePath;
+
+  @HiveField(4)
+  bool isLearned;
+
+  Flashcard({
+    required this.question,
+    required this.answer,
+    this.questionImagePath,
+    this.answerImagePath,
+    this.isLearned = false,
+  });
 }

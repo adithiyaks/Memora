@@ -21,7 +21,25 @@ class Memora extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Memora',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false, 
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.blue[100],
+        // Additional theme customizations
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+        ),
+        cardTheme: CardThemeData(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          elevation: 6,
+        ),
+      ),
       home: HomeScreen(),
     );
   }

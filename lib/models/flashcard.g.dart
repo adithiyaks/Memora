@@ -19,17 +19,26 @@ class FlashcardAdapter extends TypeAdapter<Flashcard> {
     return Flashcard(
       question: fields[0] as String,
       answer: fields[1] as String,
+      questionImagePath: fields[2] as String?,
+      answerImagePath: fields[3] as String?,
+      isLearned: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Flashcard obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.question)
       ..writeByte(1)
-      ..write(obj.answer);
+      ..write(obj.answer)
+      ..writeByte(2)
+      ..write(obj.questionImagePath)
+      ..writeByte(3)
+      ..write(obj.answerImagePath)
+      ..writeByte(4)
+      ..write(obj.isLearned);
   }
 
   @override
