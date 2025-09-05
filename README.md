@@ -1,16 +1,21 @@
-# memora
+# Memora
 
-A new Flutter project.
+Memora is a sleek flashcards app to create, flip, and review cards fast. Includes categories, progress tracking, dark mode, persistence, and a quiz mode.
 
-## Getting Started
+## Features
+- Create cards (Q/A), tap to flip
+- List/grid view with images
+- Next/Prev navigation + “3 of 10”
+- Mark as learned
+- Categories (Math, Science, History, …)
+- Local persistence (Hive)
+- Dark mode toggle
+- Quiz mode (MCQ + final score)
 
-This project is a starting point for a Flutter application.
+## Tech Stack
+Flutter • Dart • Hive (local DB) • (GetX/Provider for state)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run Locally
+```bash
+flutter pub get
+flutter run
