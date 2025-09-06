@@ -50,12 +50,15 @@ Here’s what’s implemented:
    cd memora
 
 2. **Install dependencies**
+   ```bash
     flutter pub get
 
-3. **Generate Hive adapters**
+4. **Generate Hive adapters**
+   ```bash
     flutter packages pub run build_runner build
 
-4. **Run the app**
+6. **Run the app**
+   ```bash
     flutter run
 
 ## Screenshots:
