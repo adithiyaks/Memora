@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:memora/controllers/category_controller.dart';
+import 'package:memora/controllers/flashcard_controller.dart';
+import 'package:memora/models/category.dart';
+import 'package:memora/screens/home_screen.dart';
 import 'models/flashcard.dart';
-import 'screens/home_screen.dart';
+// import 'screens/cards_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +16,11 @@ void main() async {
   
   // Register Hive adapters
   Hive.registerAdapter(FlashcardAdapter());
+  Hive.registerAdapter(CategoryAdapter());
+    
+
+  Get.put(FlashcardController());
+  Get.put(CategoryController());
   
   runApp(Memora());
 }

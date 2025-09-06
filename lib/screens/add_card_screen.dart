@@ -4,7 +4,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controllers/flashcard_controller.dart';
 
+// 1. MODIFIED WIDGET TO ACCEPT categoryId
 class AddCardScreen extends StatefulWidget {
+  final String categoryId;
+  const AddCardScreen({super.key, required this.categoryId});
+
   @override
   _AddCardScreenState createState() => _AddCardScreenState();
 }
@@ -29,8 +33,6 @@ class _AddCardScreenState extends State<AddCardScreen> {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1800,
-        maxHeight: 1800,
         imageQuality: 85,
       );
       
@@ -45,15 +47,13 @@ class _AddCardScreenState extends State<AddCardScreen> {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to pick image',
+        'Error', 'Failed to pick image',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
     }
   }
 
+  // --- UI HELPER WIDGETS (UNCHANGED) ---
   Widget _buildSectionCard({
     required String title,
     required Color titleColor,
@@ -62,17 +62,17 @@ class _AddCardScreenState extends State<AddCardScreen> {
   }) {
     return Card(
       elevation: 2,
-      margin: EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(icon, color: titleColor, size: 24),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
@@ -83,7 +83,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             content,
           ],
         ),
@@ -100,13 +100,6 @@ class _AddCardScreenState extends State<AddCardScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
             ),
             child: Stack(
               children: [
@@ -133,33 +126,21 @@ class _AddCardScreenState extends State<AddCardScreen> {
                       });
                     },
                     child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
                       ),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 16,
-                      ),
+                      child: const Icon(Icons.close, color: Colors.white, size: 16),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
         
-        // Add Image Button
         InkWell(
           onTap: () => _pickImage(isQuestion),
           borderRadius: BorderRadius.circular(12),
@@ -175,13 +156,12 @@ class _AddCardScreenState extends State<AddCardScreen> {
               children: [
                 Icon(
                   imagePath != null ? Icons.edit : Icons.add_photo_alternate,
-                  color: Colors.blue,
-                  size: 24,
+                  color: Colors.blue, size: 24,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   imagePath != null ? 'Change Image' : 'Add Image',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.blue,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -213,68 +193,35 @@ class _AddCardScreenState extends State<AddCardScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue, width: 2),
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         filled: true,
         fillColor: Colors.grey[50],
       ),
       maxLines: 4,
       minLines: 2,
       textCapitalization: TextCapitalization.sentences,
-      style: TextStyle(fontSize: 16),
+      style: const TextStyle(fontSize: 16),
     );
   }
+  // --- END OF UI HELPER WIDGETS ---
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(
-          'Create Flashcard',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: const Text('Create Flashcard', style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.quiz,
-                    size: 48,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Create a New Flashcard',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
-                    ),
-                  ),
-                  Text(
-                    'Add text and images to make learning effective',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Question Section
             _buildSectionCard(
               title: 'Question',
@@ -283,7 +230,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
               content: Column(
                 children: [
                   _buildImageSection(questionImagePath, true),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   _buildTextField(
                     controller: questionController,
                     label: 'Question Text',
@@ -302,7 +249,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
               content: Column(
                 children: [
                   _buildImageSection(answerImagePath, false),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   _buildTextField(
                     controller: answerController,
                     label: 'Answer Text',
@@ -313,93 +260,50 @@ class _AddCardScreenState extends State<AddCardScreen> {
               ),
             ),
 
-            // Action Buttons
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (questionController.text.trim().isNotEmpty && 
-                          answerController.text.trim().isNotEmpty) {
-                        await flashcardController.addCard(
-                          questionController.text.trim(),
-                          answerController.text.trim(),
-                          questionImagePath: questionImagePath,
-                          answerImagePath: answerImagePath,
-                        );
-                        Get.back();
-                        Get.snackbar(
-                          'Success! 🎉',
-                          'Flashcard created successfully',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                          margin: EdgeInsets.all(10),
-                          borderRadius: 10,
-                        );
-                      } else {
-                        Get.snackbar(
-                          'Incomplete',
-                          'Please fill in both question and answer',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.orange,
-                          colorText: Colors.white,
-                          margin: EdgeInsets.all(10),
-                          borderRadius: 10,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.save, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          'Save Card',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+            // Save Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  if (questionController.text.trim().isNotEmpty && 
+                      answerController.text.trim().isNotEmpty) {
+                    
+                    // 2. MODIFIED CONTROLLER CALL TO PASS categoryId
+                    await flashcardController.addCard(
+                      questionController.text.trim(),
+                      answerController.text.trim(),
+                      questionImagePath: questionImagePath,
+                      answerImagePath: answerImagePath,
+                      categoryId: widget.categoryId, // <-- THE FIX
+                    );
+                    
+                    Get.back();
+                    Get.snackbar(
+                      'Success! 🎉', 'Flashcard created successfully',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  } else {
+                    Get.snackbar(
+                      'Incomplete', 'Please fill in both question and answer',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Get.back(),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      side: BorderSide(color: Colors.grey[400]!),
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
+                icon: const Icon(Icons.save, size: 20),
+                label: const Text(
+                  'Save Card',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
-              ],
+              ),
             ),
-            SizedBox(height: 20),
           ],
         ),
       ),

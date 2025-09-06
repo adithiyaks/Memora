@@ -7,14 +7,13 @@ import '../controllers/flashcard_controller.dart';
 
 class FlashcardWidget extends StatelessWidget {
   final Flashcard flashcard;
-  final int? index;
   final VoidCallback? onMarkAsLearned;
   final bool showDeleteButton;
   final bool showLearnedButton;
   
-  FlashcardWidget({
+  const FlashcardWidget({
+    super.key,
     required this.flashcard,
-    this.index,
     this.onMarkAsLearned,
     this.showDeleteButton = true,
     this.showLearnedButton = true,
@@ -24,40 +23,40 @@ class FlashcardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shadowColor: Colors.grey.withValues(alpha: 0.5),
+      shadowColor: Colors.black.withValues(alpha: .1),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         side: flashcard.isLearned 
-            ? BorderSide(color: Colors.green, width: 2)
+            ? const BorderSide(color: Colors.green, width: 2.5)
             : BorderSide.none,
       ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.67, // Reduced height
-        child: FlipCard(
-          direction: FlipDirection.HORIZONTAL,
-          speed: 600,
-          front: _buildSide(
-            flashcard.question, 
-            flashcard.questionImagePath,
-            flashcard.isLearned ? Colors.green : Colors.blue,
-            Icons.help_outline,
-            "Question",
-            isAnswerSide: false,
-          ),
-          back: _buildSide(
-            flashcard.answer, 
-            flashcard.answerImagePath,
-            flashcard.isLearned ? Colors.green : Colors.orange,
-            Icons.lightbulb_outline,
-            "Answer",
-            isAnswerSide: true,
-          ),
+      child: FlipCard(
+        direction: FlipDirection.HORIZONTAL,
+        speed: 500,
+        front: _buildSide(
+          context,
+          flashcard.question, 
+          flashcard.questionImagePath,
+          flashcard.isLearned ? Colors.green : Colors.blue,
+          Icons.help_outline,
+          "Question",
+          isAnswerSide: false,
+        ),
+        back: _buildSide(
+          context,
+          flashcard.answer, 
+          flashcard.answerImagePath,
+          flashcard.isLearned ? Colors.green : Colors.deepOrange,
+          Icons.lightbulb_outline,
+          "Answer",
+          isAnswerSide: true,
         ),
       ),
     );
   }
 
   Widget _buildSide(
+    BuildContext context,
     String text, 
     String? imagePath,
     Color color, 
@@ -68,155 +67,92 @@ class FlashcardWidget extends StatelessWidget {
     final FlashcardController flashcardController = Get.find<FlashcardController>();
     
     return Container(
-      margin: EdgeInsets.all(4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color,
-            color.withValues(alpha: 0.7),
-          ],
+          colors: [color.withValues(alpha:0.9), color],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.3),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16.0),
       ),
       child: Stack(
         children: [
-          // Main content with image support
           _buildCardContent(text, imagePath, icon),
           
-          // Top label
           Positioned(
-            top: 8,
-            left: 8,
+            top: 12,
+            left: 12,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.black.withValues(alpha: .2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           
-          // Delete button (always visible on top right)
-          if (index != null && showDeleteButton)
+          if (showDeleteButton)
             Positioned(
               top: 8,
               right: 8,
-              child: GestureDetector(
-                onTap: () {
+              child: IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.white),
+                onPressed: () {
                   Get.dialog(
                     AlertDialog(
-                      title: Text('Delete Flashcard'),
-                      content: Text('Are you sure you want to delete this flashcard?'),
+                      title: const Text('Delete Flashcard'),
+                      content: const Text('Are you sure you want to delete this flashcard?'),
                       actions: [
                         TextButton(
                           onPressed: () => Get.back(),
-                          child: Text('Cancel'),
+                          child: const Text('Cancel'),
                         ),
                         TextButton(
                           onPressed: () async {
-                            await flashcardController.deleteCard(index!);
+                            await flashcardController.deleteCard(flashcard);
                             Get.back();
                             Get.snackbar(
                               'Deleted',
                               'Flashcard deleted successfully',
                               snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
                             );
                           },
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.red),
-                          ),
+                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
                   );
                 },
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
               ),
             ),
 
-          // Mark as learned button (only on answer side and if not learned)
-          if (isAnswerSide && !flashcard.isLearned && showLearnedButton)
+          if (isAnswerSide && showLearnedButton)
             Positioned(
-              top: 8,
-              right: 50, // Position next to delete button
-              child: GestureDetector(
-                onTap: () async {
+              bottom: 8,
+              right: 8,
+              child: ElevatedButton.icon(
+                onPressed: () {
                   if (onMarkAsLearned != null) {
                     onMarkAsLearned!();
-                  } else if (index != null) {
-                    await flashcardController.toggleLearned(index!);
-                    Get.snackbar(
-                      'Great!',
-                      'Card marked as learned',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                      duration: Duration(seconds: 2),
-                    );
+                  } else {
+                    flashcardController.toggleLearned(flashcard);
                   }
                 },
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
+                icon: Icon(
+                  flashcard.isLearned ? Icons.remove_done : Icons.check_circle, 
+                  size: 18,
+                ),
+                label: Text(flashcard.isLearned ? 'Mark Unlearned' : 'Got it!'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: flashcard.isLearned ? Colors.grey[700] : Colors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Icon(
-                    Icons.check_circle_outline,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ),
-
-          // Learned status indicator (when card is learned)
-          if (flashcard.isLearned)
-            Positioned(
-              top: 8,
-              right: 50, // Position next to delete button
-              child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  Icons.check_circle,
-                  color: Colors.white,
-                  size: 20,
                 ),
               ),
             ),
@@ -226,21 +162,18 @@ class FlashcardWidget extends StatelessWidget {
   }
 
   Widget _buildCardContent(String text, String? imagePath, IconData icon) {
-    // Check if image exists and is valid
     bool hasValidImage = imagePath != null && 
                         imagePath.isNotEmpty && 
                         File(imagePath).existsSync();
 
     if (hasValidImage) {
-      // Layout with image: image at top, text below
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Image section (takes 60% of height)
           Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(16, 40, 16, 8), // Top padding for label
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 50, 20, 10),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.file(
@@ -250,24 +183,17 @@ class FlashcardWidget extends StatelessWidget {
               ),
             ),
           ),
-          // Text section (takes 40% of height)
           Expanded(
-            flex: 2,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Center(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.3,
+            flex: 3,
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 50),
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
@@ -275,32 +201,19 @@ class FlashcardWidget extends StatelessWidget {
         ],
       );
     } else {
-      // Layout without image: centered text
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: Colors.white.withValues(alpha: 0.7),
-                size: 32,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 60, 24, 60),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 12),
-              Text(
-                text,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  height: 1.3,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 8,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+            ),
           ),
         ),
       );

@@ -5,24 +5,31 @@ import 'package:memora/models/flashcard.dart';
 class FlashcardController extends GetxController {
   var flashcards = <Flashcard>[].obs;
   var unlearnedFlashcards = <Flashcard>[].obs;
-  late Box<Flashcard> _flashcardBox;
+  
+  // Box is made nullable initially
+  Box<Flashcard>? _flashcardBox;
 
   @override
   void onInit() {
     super.onInit();
+    
+    // Asynchronously initialize the box
     _initHive();
   }
 
-  // Initialize Hive box
+  // Initialize Hive box and load initial data
   Future<void> _initHive() async {
     _flashcardBox = await Hive.openBox<Flashcard>('flashcards');
     loadFlashcards();
   }
   
-  // Load flashcards
+  // Load flashcards from the box into the reactive list
   void loadFlashcards() {
-    flashcards.value = _flashcardBox.values.toList();
-    _updateUnlearnedCards();
+    // Check if the box is open before using it
+    if (_flashcardBox != null) {
+      flashcards.value = _flashcardBox!.values.toList();
+      _updateUnlearnedCards();
+    }
   }
 
   // Update unlearned cards list
@@ -30,64 +37,49 @@ class FlashcardController extends GetxController {
     unlearnedFlashcards.value = flashcards.where((card) => !card.isLearned).toList();
   }
 
-  // Save flashcard with image support
+  // Add a new flashcard
   Future<void> addCard(
     String q, 
     String a, 
     {String? questionImagePath, 
-    String? answerImagePath}
+    String? answerImagePath,
+    String? categoryId}
   ) async {
-    if (q.trim().isNotEmpty && a.trim().isNotEmpty) {
+    if (q.trim().isNotEmpty && a.trim().isNotEmpty && _flashcardBox != null) {
       final flashcard = Flashcard(
         question: q.trim(), 
         answer: a.trim(),
+        categoryId: categoryId ?? 'default', 
         questionImagePath: questionImagePath,
         answerImagePath: answerImagePath,
       );
-      await _flashcardBox.add(flashcard);
-      loadFlashcards(); // Refresh the observable lists
+      await _flashcardBox!.add(flashcard);
+      loadFlashcards();
     }
   }
 
-  // Delete flashcard
-  Future<void> deleteCard(int index) async {
-    if (index >= 0 && index < flashcards.length) {
-      await flashcards[index].delete(); // HiveObject method
-      loadFlashcards(); // Refresh the observable lists
-    }
+  // Delete a flashcard by its object
+  Future<void> deleteCard(Flashcard card) async {
+    await card.delete();
+    loadFlashcards();
   }
 
-  // Edit flashcard with image support
-  Future<void> editCard(
-    int index, 
-    String newQuestion, 
-    String newAnswer,
-    {String? questionImagePath, 
-    String? answerImagePath}
-  ) async {
-    if (index >= 0 && index < flashcards.length &&
-        newQuestion.trim().isNotEmpty && newAnswer.trim().isNotEmpty) {
-      flashcards[index].question = newQuestion.trim();
-      flashcards[index].answer = newAnswer.trim();
-      flashcards[index].questionImagePath = questionImagePath;
-      flashcards[index].answerImagePath = answerImagePath;
-      await flashcards[index].save(); // HiveObject method
-      loadFlashcards(); // Refresh the observable lists
+  // Delete all flashcards belonging to a specific category
+  Future<void> deleteCardsForCategory(String categoryId) async {
+    if (_flashcardBox == null) return;
+    
+    final cardsToDelete = _flashcardBox!.values.where((card) => card.categoryId == categoryId).toList();
+    
+    for (var card in cardsToDelete) {
+      await card.delete();
     }
+    
+    loadFlashcards();
   }
-
+  
   // Mark card as learned/unlearned
-  Future<void> toggleLearned(int index) async {
-    if (index >= 0 && index < flashcards.length) {
-      flashcards[index].isLearned = !flashcards[index].isLearned;
-      await flashcards[index].save();
-      loadFlashcards(); // Refresh both lists
-    }
-  }
-
-  // Mark card as learned by Flashcard object (for swiper)
-  Future<void> markAsLearned(Flashcard card) async {
-    card.isLearned = true;
+  Future<void> toggleLearned(Flashcard card) async {
+    card.isLearned = !card.isLearned;
     await card.save();
     loadFlashcards();
   }
@@ -95,25 +87,4 @@ class FlashcardController extends GetxController {
   // Get statistics
   int get totalCards => flashcards.length;
   int get learnedCards => flashcards.where((card) => card.isLearned).length;
-  int get unlearnedCount => flashcards.where((card) => !card.isLearned).length;
-  
-  // Clear all flashcards
-  Future<void> clearAllCards() async {
-    await _flashcardBox.clear();
-    loadFlashcards();
-  }
-
-  // Reset all cards to unlearned
-  Future<void> resetAllProgress() async {
-    for (var card in flashcards) {
-      card.isLearned = false;
-      await card.save();
-    }
-    loadFlashcards();
-  }
-
-  // Filter methods for different views
-  List<Flashcard> get allCards => flashcards;
-  List<Flashcard> get onlyUnlearned => unlearnedFlashcards;
-  List<Flashcard> get onlyLearned => flashcards.where((card) => card.isLearned).toList();
 }

@@ -1,29 +1,45 @@
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 
-part 'flashcard.g.dart'; // Generated file
+part 'flashcard.g.dart';
 
 @HiveType(typeId: 0)
 class Flashcard extends HiveObject {
   @HiveField(0)
-  String question;
+  late String id;
 
   @HiveField(1)
-  String answer;
+  late String question;
 
   @HiveField(2)
-  String? questionImagePath;
+  late String answer;
 
   @HiveField(3)
-  String? answerImagePath;
+  late String? questionImagePath;
 
   @HiveField(4)
-  bool isLearned;
+  late String? answerImagePath;
+
+  @HiveField(5)
+  late bool isLearned;
+
+  @HiveField(6)
+  late DateTime createdAt;
+
+  @HiveField(7)
+  late String categoryId; // NEW: Category ID field
 
   Flashcard({
+    String? id,
     required this.question,
     required this.answer,
+    required this.categoryId, // Now required
     this.questionImagePath,
     this.answerImagePath,
     this.isLearned = false,
-  });
+    DateTime? createdAt,
+  }) {
+    this.id = id ?? const Uuid().v4();
+    this.createdAt = createdAt ?? DateTime.now();
+  }
 }
