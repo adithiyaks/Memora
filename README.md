@@ -60,7 +60,13 @@ Here’s what’s implemented:
 
 ## Screenshots:
 ![Screenshot_2025-09-06-23-56-52-689_com example memora](https://github.com/user-attachments/assets/8a14cd1a-18be-4eb8-8455-fb315b62faed)
+
+
 ![Screenshot_2025-09-06-23-57-02-654_com example memora](https://github.com/user-attachments/assets/dda20ce0-9acb-480d-9680-dd05367a1ebc)
+
+
 ![Screenshot_2025-09-06-23-58-15-618_com example memora](https://github.com/user-attachments/assets/6b0a28e2-d64b-4e18-b62f-6c33b4d3ea52)
+
+
 ![Screenshot_2025-09-06-23-57-09-594_com example memora](https://github.com/user-attachments/assets/2ab5663e-99ac-45dd-859a-8e9aaf9b43d3)
 
