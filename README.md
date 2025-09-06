@@ -59,7 +59,13 @@ Here’s what’s implemented:
     flutter run
 
 ## Screenshots:
-![Screenshot_2025-09-06-23-56-52-689_com example memora](https://github.com/user-attachments/assets/8a14cd1a-18be-4eb8-8455-fb315b62faed)
+![Screenshot_2025-09-07-01-23-23-375_com example memora](https://github.com/user-attachments/assets/63b88204-43b6-498f-920f-b6911e6e5cb0)
+
+
+![Screenshot_2025-09-07-01-23-36-735_com example memora](https://github.com/user-attachments/assets/e2b06964-3782-45f4-9dd9-77382c9f7365)
+
+
+![Screenshot_2025-09-07-01-23-28-920_com example memora](https://github.com/user-attachments/assets/cc04d0c2-8bd6-4551-9204-2b5f8d2fe9d2)
 
 
 ![Screenshot_2025-09-06-23-57-02-654_com example memora](https://github.com/user-attachments/assets/dda20ce0-9acb-480d-9680-dd05367a1ebc)
